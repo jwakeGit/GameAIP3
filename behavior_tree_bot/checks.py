@@ -33,21 +33,21 @@ def if_strongest_safe(state):
 # mid game defense. Essentially we can use this to add a behavior 
 # that can signal when we need to defend (very generalized though)
 #
-# def if_incoming_attack(state):
-#   for my_planet in state.my_planets():
-#     for enemy_fleet in enemy_fleets():
-#       if my_planet == enemy_fleet().destination:
-#         return true
-#       else: return false 
+def if_incoming_attack(state):
+  for my_planet in state.my_planets():
+    for enemy_fleet in state.enemy_fleets():
+      if my_planet == enemy_fleet.destination_planet:
+        return True
+      else: return False 
 #
 # if_attacking_same() would be used to check when we are attacking a 
 # planet and it is also being attacked, we can send follow up ships 
 #
-# def if_attacking_same(state):
-#   compare fleets attacking same planets
-#   for my_fleet in state.my_fleets():
-#     for enemy_fleet in state.enemy_fleets(): 
-#       if my_fleets().destination == enemy_fleet.destination:
-#         return true
-#     else: return false
+def if_attacking_same(state):
+  #compare fleets attacking same planets
+  for my_fleet in state.my_fleets():
+    for enemy_fleet in state.enemy_fleets(): 
+      if my_fleet.destination_planet == enemy_fleet.destination_planet:
+        return True
+    else: return False
 # ----------------------
