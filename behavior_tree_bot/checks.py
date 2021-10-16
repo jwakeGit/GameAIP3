@@ -31,15 +31,15 @@ def if_strongest_safe(state):
 # --- IAN PSEUDOCODE ---
 # I believe if_incoming_attack() can be used for early game rollout or 
 # mid game defense. Essentially we can use this to add a behavior 
-# that can send support to planets that are closest to each other
-
+# that can signal when we need to defend (very generalized though)
+#
 # def if_incoming_attack(state):
 #   for my_planet in state.my_planets():
 #     for enemy_fleet in enemy_fleets():
 #       if my_planet == enemy_fleet().destination:
 #         return true
 #       else: return false 
-
+#
 # if_attacking_same() would be used to check when we are attacking a 
 # planet and it is also being attacked, we can send follow up ships 
 #
@@ -50,3 +50,4 @@ def if_strongest_safe(state):
 #       if my_fleets().destination == enemy_fleet.destination:
 #         return true
 #     else: return false
+# ----------------------
