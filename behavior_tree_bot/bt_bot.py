@@ -26,19 +26,38 @@ def setup_behavior_tree():
     # Top-down construction of behavior tree
     root = Selector(name='High Level Ordering of Strategies')
 
-    offensive_plan = Sequence(name='Offensive Strategy')
-    largest_fleet_check = Check(have_largest_fleet)
+    early_plan = Sequence(name='Early Strategy')
+    check_neutral_planets = Check(if_neutral_planet_available)
+    control_action = Action(spread_to_weakest_neutral_planet)
+    early_plan.child_nodes = [check_neutral_planets, control_action]
+
+    late_support_plan = Sequence(name='Late Support Strategy')
+    check_no_neutral_planets = Check(if_no_neutral_planets)
+    check_strongest_in_danger = Check(if_strongest_in_danger)
+    support_action = Action(support_strongest_planet)
+    late_support_plan.child_nodes = [check_no_neutral_planets, check_strongest_in_danger, support_action]
+
+    late_attack_plan = Sequence(name='Late Attack Strategy')
+    check_no_neutral_planets = Check(if_no_neutral_planets)
+    check_strongest_safe = Check(if_strongest_safe)
     attack = Action(attack_weakest_enemy_planet)
-    offensive_plan.child_nodes = [largest_fleet_check, attack]
+    late_attack_plan.child_nodes = [check_no_neutral_planets, check_strongest_safe, attack]
 
-    spread_sequence = Sequence(name='Spread Strategy')
-    neutral_planet_check = Check(if_neutral_planet_available)
-    spread_action = Action(spread_to_weakest_neutral_planet)
-    spread_sequence.child_nodes = [neutral_planet_check, spread_action]
+    root.child_nodes = [early_plan, late_support_plan, late_attack_plan, attack.copy()]
 
-    root.child_nodes = [offensive_plan, spread_sequence, attack.copy()]
+    #offensive_plan = Sequence(name='Offensive Strategy')
+    #largest_fleet_check = Check(have_largest_fleet)
+    #attack = Action(attack_weakest_enemy_planet)
+    #offensive_plan.child_nodes = [largest_fleet_check, attack]
 
-    logging.info('\n' + root.tree_to_string())
+    #spread_sequence = Sequence(name='Spread Strategy')
+    #neutral_planet_check = Check(if_neutral_planet_available)
+    #spread_action = Action(spread_to_weakest_neutral_planet)
+    #spread_sequence.child_nodes = [neutral_planet_check, spread_action]
+
+    #root.child_nodes = [offensive_plan, spread_sequence, attack.copy()]
+
+    #logging.info('\n' + root.tree_to_string())
     return root
 
 # You don't need to change this function
@@ -49,11 +68,14 @@ if __name__ == '__main__':
     logging.basicConfig(filename=__file__[:-3] + '.log', filemode='w', level=logging.DEBUG)
 
     behavior_tree = setup_behavior_tree()
+    print('debug 1')
     try:
         map_data = ''
         while True:
+            print('debug 2')
             current_line = input()
             if len(current_line) >= 2 and current_line.startswith("go"):
+                print('debug 3')
                 planet_wars = PlanetWars(map_data)
                 do_turn(planet_wars)
                 finish_turn()
