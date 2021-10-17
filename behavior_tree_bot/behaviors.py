@@ -114,13 +114,23 @@ def spread_to_nearest_neutral_planet(state):
     strongest_planet = max(state.my_planets(), key=lambda p: p.num_ships, default=None)
 
     # (2) Find the weakest neutral planet.
+    # (2.1) Start with the nearest_planet being null.
     nearest_planet = None
+    # (2.2) Loop through each neutral planet on the board.
     for planet in state.neutral_planets():
+        # (2.3) Start the isTargeted variable as False.
         isTargeted = False
+        # (2.4) Loop through each of my fleets
         for fleet in state.my_fleets():
+            # (2.5) If the current fleet is headed to the current neutral planet...
             if fleet.destination_planet == planet.ID:
+                # (2.6) ...then we set isTargeted to True.
                 isTargeted = True
+        #(2.7) If the current planet is not targeted, then we pass condition 1.
+        #(2.7.1) If nearest_planet is None, we immediately set it equal to the current planet.
+        #(2.7.2) Otherwise, if this planet is closer to our strongest planet than the current nearest_planet...
         if (not isTargeted) and (nearest_planet == None or state.distance(strongest_planet.ID, planet.ID) < state.distance(strongest_planet.ID, nearest_planet.ID)):
+            #(2.8) ...then we set nearest_planet to be equal to the current planet.
             nearest_planet = planet
 
     if not nearest_planet: return False
