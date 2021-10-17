@@ -37,6 +37,8 @@ def attack_weakest_enemy_planet(state):
     # (2) Find the weakest enemy planet.
     weakest_planet = min(state.enemy_planets(), key=lambda t: t.num_ships, default=None)
 
+    if not weakest_planet: return False
+    
     logging.info(weakest_planet.owner)
 
     # (3) Find the best planet to use for the attack on the weakest enemy planet
@@ -54,7 +56,7 @@ def attack_weakest_enemy_planet(state):
     else:
         # (4) Send half the ships from my closest planet to the weakest enemy planet.
         required_ships = weakest_planet.num_ships + state.distance(closest_planet.ID, weakest_planet.ID) * weakest_planet.growth_rate + 1
-        if required_ships > (closest_planet.num_ships / 2): return False
+        if required_ships > (closest_planet.num_ships): return False
         return issue_order(state, closest_planet.ID, weakest_planet.ID, required_ships)
 
 
@@ -99,7 +101,7 @@ def spread_to_weakest_neutral_planet(state):
     else:
         # (3) Send half the ships from my closest planet to the weakest neutral planet.
         required_ships = weakest_planet.num_ships + state.distance(closest_planet.ID, weakest_planet.ID) * weakest_planet.growth_rate + 1
-        if required_ships > (closest_planet.num_ships / 2): return False
+        if required_ships > (closest_planet.num_ships): return False
         return issue_order(state, closest_planet.ID, weakest_planet.ID, required_ships)
 
 def spread_to_nearest_neutral_planet(state):
@@ -152,7 +154,7 @@ def spread_to_nearest_neutral_planet(state):
     else:
         # (4) Send half the ships from my strongest planet to the weakest enemy planet.
         required_ships = nearest_planet.num_ships + state.distance(closest_planet.ID, nearest_planet.ID) * nearest_planet.growth_rate + 1
-        if required_ships > (closest_planet.num_ships / 2): return False
+        if required_ships > (closest_planet.num_ships): return False
         return issue_order(state, closest_planet.ID, nearest_planet.ID, required_ships)
 
 def support_strongest_planet(state):
@@ -183,6 +185,6 @@ def support_strongest_planet(state):
 
     if closest_planet != None:
         required_ships = fleet_size + state.distance(closest_planet.ID, strongest_planet.ID) * strongest_planet.growth_rate + 1
-        if required_ships > (closest_planet.num_ships / 2): return False
+        if required_ships > (closest_planet.num_ships): return False
         return issue_order(state, closest_planet.ID, strongest_planet.ID, required_ships)
     else: return False
