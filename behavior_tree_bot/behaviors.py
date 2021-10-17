@@ -37,6 +37,8 @@ def attack_weakest_enemy_planet(state):
     # (2) Find the weakest enemy planet.
     weakest_planet = min(state.enemy_planets(), key=lambda t: t.num_ships, default=None)
 
+    logging.info(weakest_planet.owner)
+
     # (3) Find the best planet to use for the attack on the weakest enemy planet
     closest_planet = None
     for planet in state.my_planets():
@@ -52,7 +54,7 @@ def attack_weakest_enemy_planet(state):
     else:
         # (4) Send half the ships from my closest planet to the weakest enemy planet.
         required_ships = weakest_planet.num_ships + state.distance(closest_planet.ID, weakest_planet.ID) * weakest_planet.growth_rate + 1
-        if required_ships > (closest_planet.num_ships / 2): required_ships = closest_planet.num_ships / 2
+        if required_ships > (closest_planet.num_ships / 2): return False
         return issue_order(state, closest_planet.ID, weakest_planet.ID, required_ships)
 
 
@@ -75,12 +77,12 @@ def spread_to_weakest_neutral_planet(state):
         for fleet in state.my_fleets():
             if fleet.destination_planet == target.ID:
                 isTargeted = True
-        logging.info(isTargeted)
-        logging.info(target.ID)
         if (not isTargeted) and (weakest_planet == None or target.num_ships < weakest_planet.num_ships):
             weakest_planet = target
 
     if not weakest_planet: return False
+
+    logging.info(weakest_planet.owner)
 
     # (2) Find the best planet to use for the attack on the weakest neutral planet
     closest_planet = None
@@ -97,7 +99,7 @@ def spread_to_weakest_neutral_planet(state):
     else:
         # (3) Send half the ships from my closest planet to the weakest neutral planet.
         required_ships = weakest_planet.num_ships + state.distance(closest_planet.ID, weakest_planet.ID) * weakest_planet.growth_rate + 1
-        if required_ships > (closest_planet.num_ships / 2): required_ships = closest_planet.num_ships / 2
+        if required_ships > (closest_planet.num_ships / 2): return False
         return issue_order(state, closest_planet.ID, weakest_planet.ID, required_ships)
 
 def spread_to_nearest_neutral_planet(state):
@@ -118,12 +120,12 @@ def spread_to_nearest_neutral_planet(state):
         for fleet in state.my_fleets():
             if fleet.destination_planet == planet.ID:
                 isTargeted = True
-        logging.info(isTargeted)
-        logging.info(planet.ID)
         if (not isTargeted) and (nearest_planet == None or state.distance(strongest_planet.ID, planet.ID) < state.distance(strongest_planet.ID, nearest_planet.ID)):
             nearest_planet = planet
 
     if not nearest_planet: return False
+
+    logging.info(nearest_planet.owner)
 
     # (3) Find the best planet to use for the attack on the weakest neutral planet
     closest_planet = None
@@ -140,7 +142,7 @@ def spread_to_nearest_neutral_planet(state):
     else:
         # (4) Send half the ships from my strongest planet to the weakest enemy planet.
         required_ships = nearest_planet.num_ships + state.distance(closest_planet.ID, nearest_planet.ID) * nearest_planet.growth_rate + 1
-        if required_ships > (closest_planet.num_ships / 2): required_ships = closest_planet.num_ships / 2
+        if required_ships > (closest_planet.num_ships / 2): return False
         return issue_order(state, closest_planet.ID, nearest_planet.ID, required_ships)
 
 def support_strongest_planet(state):
@@ -171,6 +173,6 @@ def support_strongest_planet(state):
 
     if closest_planet != None:
         required_ships = fleet_size + state.distance(closest_planet.ID, strongest_planet.ID) * strongest_planet.growth_rate + 1
-        if required_ships > (closest_planet.num_ships / 2): required_ships = closest_planet.num_ships / 2
+        if required_ships > (closest_planet.num_ships / 2): return False
         return issue_order(state, closest_planet.ID, strongest_planet.ID, required_ships)
     else: return False
