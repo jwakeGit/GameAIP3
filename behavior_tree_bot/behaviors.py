@@ -1,4 +1,4 @@
-from os import close
+from os import close, stat
 import logging, sys
 sys.path.insert(0, '../')
 from planet_wars import issue_order
@@ -26,6 +26,37 @@ from planet_wars import issue_order
 #       required_ships = target_planet.num_ships + 
 #               state.distance(my_planet.ID, target_planet.ID) * target_planet.growth_rate + 1
 # ----------------------
+
+def claim_neutrals(state):
+    # --- Ian's Code ---
+    # Implimentation of other bots' early game rollouts
+
+    # load a planet we don't own
+    for neutral_planet in state.not_my_planets():
+
+        # check if we already have a fleet being sent to questioned planet
+        isTargeted = False
+        for fleet in state.my_fleets():
+            if fleet.destination_planet == neutral_planet.ID:
+                        isTargeted = True
+
+        # if we are not sending a fleet to said planet
+        if not isTargeted:
+            # load a planet we own
+            for my_planet in state.my_planets():
+                # check if we own the planet or if the enemy does
+                # set required ships accordingly
+                if neutral_planet.owner == 0:
+                    required_ships = neutral_planet.num_ships + 1
+                elif neutral_planet.owner == 2:
+                    required_ships = neutral_planet.num_ships + state.distance(my_planet.ID, neutral_planet.ID) * neutral_planet.growth_rate + 1
+
+                # if we have the required number of ships, execute the order
+                if my_planet.num_ships > required_ships:
+                    issue_order(state, my_planet.ID, neutral_planet.ID, required_ships)
+
+    return False
+
 
 def attack_weakest_enemy_planet(state):
     # (1) If we currently have a fleet in flight, abort plan.

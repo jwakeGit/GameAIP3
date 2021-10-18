@@ -28,7 +28,10 @@ def setup_behavior_tree():
 
     early_plan = Sequence(name='Early Strategy')
     check_neutral_planets = Check(if_neutral_planet_available)
-    control_action = Action(spread_to_nearest_neutral_planet)
+    # --- Ian's Code ---
+    control_action = Action(claim_neutrals)
+    # ------------------
+    #control_action = Action(spread_to_nearest_neutral_planet)
     early_plan.child_nodes = [check_neutral_planets, control_action]
 
     late_support_plan = Sequence(name='Late Support Strategy')
